@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+  </head>
+  <body>
+    <script>
+      let data = [
+        {
+          orchardSite: "R108A",
+          blockName: "H01",
+          Variety: "Red Fuji",
+          Rate: 22,
+          Pick: 1,
+          binId: 6,
+          pickerName: "Alicia Oritizee"
+        },
+        {
+          orchardSite: "R108A",
+          blockName: "H02",
+          Variety: "Red Fuji",
+          Rate: 22,
+          Pick: 1,
+          binId: 7,
+          pickerName: "David Dominguez"
+        },
+        {
+          orchardSite: "R108A",
+          blockName: "H02",
+          Variety: "Red Fuji",
+          Rate: 22,
+          Pick: 1,
+          binId: 8,
+          pickerName: "David Dominguez"
+        },
+        {
+          orchardSite: "R108A",
+          blockName: "H03",
+          Variety: "Red Fuji",
+          Rate: 22,
+          Pick: 1,
+          binId: 9,
+          pickerName: "Elizabeth Perez"
+        },
+        {
+          orchardSite: "R108A",
+          blockName: "H02",
+          Variety: "Red Fuji",
+          Rate: 22,
+          Pick: 1,
+          binId: 11,
+          pickerName: "David Dominguez"
+        },
+        {
+          orchardSite: "R108A",
+          blockName: "H03",
+          Variety: "Red Fuji",
+          Rate: 22,
+          Pick: 1,
+          binId: 12,
+          pickerName: "Elizabeth Perez"
+        },
+        {
+          orchardSite: "R108A",
+          blockName: "H04",
+          Variety: "Red Fuji",
+          Rate: 22,
+          Pick: 1,
+          binId: 10,
+          pickerName: "Francisco Castro"
+        }
+      ];
+    </script>
+    <script>
+      // 目标是：
+      // 1.查看数组中除了binId以外的每一项属性与其他对象是否相等
+      // 2.把相等的数组归并到一个新数组并加上重复次数的计数
+      // 由于需要把每个对象都和所有其他成员进行一次比较
+      // 所以我们采用reduce函数
+      // 每次拿出一个对象都与之前存入acc的所有对象进行比较
+
+      // 方法：
+      // 1.用reduce传入[]作为acc开始并传入比较对象
+      //2.把binId去掉用于比较
+      // 3.先看acc是否为空，如果是空的表示第一次，直接返回对象
+      //4.不是第一次时，把item与acc中每一项进行比较
+      // 只有全部都不相同才加入到acc，不然说明至少重复一次
+      //5.查看item与acc中的每一项是否在去掉binId后相同
+      //如果相同，只计数，不再存入重复项进去acc
+      // 遍历对比结束后查看，只有全false才说明该el与现有的全不同
+      //如果不同，就把item加入到acc中
+      //新建一个计数数组，长度跟数据长度一样，初始值都设1，因为存在的起码一次
+      // 遍历刚才统计的计数结果数组，有结果的取代新计数数组的值
+
+      let storeTempCount = [];
+      let uniqueArr = [];
+      data.forEach((element, index) => {
+        const withoutId = _.omit(element, "binId");
+        let loopResult = [];
+        if (uniqueArr.length == 0) {
+          loopResult.push(false);
+        }
+        uniqueArr.forEach((uniqueEl, uniquedIndex) => {
+          if (_.isEqual(uniqueEl, withoutId)) {
+            loopResult.push(true);
+            if (!storeTempCount[uniquedIndex]) {
+              storeTempCount[uniquedIndex] = 1;
+            }
+            storeTempCount[uniquedIndex]++;
+          } else {
+            loopResult.push(false);
+          }
+        });
+        loopResult = new Set(loopResult);
+        if (loopResult.size == 1 && loopResult.has(false)) {
+          return uniqueArr.push(withoutId);
+        }
+      });
+
+      let countArr = new Array(uniqueArr.length).fill(1);
+      storeTempCount.map((el, i) => {
+        if (el) {
+          countArr[i] = el;
+        }
+      });
+
+      const groupedData = uniqueArr.map((el, i) => ({
+        ...el,
+        count: countArr[i]
+      }));
+    </script>
+  </body>
+</html>
